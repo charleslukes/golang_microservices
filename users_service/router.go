@@ -10,6 +10,7 @@ func userRouter() http.Handler  {
 	r := chi.NewRouter()
 
 	r.Route("/users", func(r chi.Router) {
+		r.Get("/{emailAddress}", getProfile)
 		r.Post("/signin",  signIn)
 		r.Post("/signup",  signUp)
 	})
