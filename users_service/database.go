@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 
@@ -31,15 +32,18 @@ func NewHandler(address string) *MongoHandler {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(address))
-	defer func() {
-		if err = client.Disconnect(ctx); err != nil {
-			panic(err)
-		}
-	}()
+
+	if err != nil {
+		fmt.Println("Panic: ", err)
+		panic(err)
+	}
+
 	mh := &MongoHandler{
 		client:   client,
 		database: DefaultDatabase,
 	}
+
+	fmt.Println("connected to db successfully")
 	return mh
 }
 
@@ -77,7 +81,7 @@ func (mh *MongoHandler) Get(filter interface{}) []*User {
 
 func (mh *MongoHandler) AddOne(u interface{}) (*mongo.InsertOneResult, error) {
 	collection := mh.client.Database(mh.database).Collection(CollectionName)
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	result, err := collection.InsertOne(ctx, u)
 	return result, err
