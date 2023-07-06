@@ -10,7 +10,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-const DefaultDatabase = "customerResource"
+const DefaultDatabase = "userResource"
 var mh *MongoHandler
 
 func main() {
