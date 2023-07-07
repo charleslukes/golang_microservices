@@ -12,14 +12,14 @@ import (
 
 const CollectionName = "users"
 
-type User struct {
-	Name       string `json:"name" bson:"name"`
-	Email      string `json:"email" bson:"email"`
-	Password   string `json:"password" bson:"password"`
-	Street     string `json:"street" bson:"street"`
-	PostalCode string `json:"postalCode" bson:"postalCode"`
-	City       string `json:"city" bson:"city"`
-	Country    string `json:"country" bson:"country"`
+type Product struct {
+	Name      string `json:"name" bson:"name"`
+	Desc      string `json:"desc" bson:"desc"`
+	Type      string `json:"type" bson:"type"`
+	Unit      string `json:"unit" bson:"unit"`
+	Price     string `json:"price" bson:"price"`
+	Available bool   `json:"available" bson:"available"`
+	Supplier  string `json:"supplier" bson:"supplier"`
 }
 
 type MongoHandler struct {
@@ -47,7 +47,7 @@ func NewHandler(address string) *MongoHandler {
 	return mh
 }
 
-func (mh *MongoHandler) GetOne(u *User, filter interface{}) error {
+func (mh *MongoHandler) GetOne(u *Product, filter interface{}) error {
 	//Will automatically create a collection if not available
 	collection := mh.client.Database(mh.database).Collection(CollectionName)
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -56,7 +56,7 @@ func (mh *MongoHandler) GetOne(u *User, filter interface{}) error {
 	return err
 }
 
-func (mh *MongoHandler) Get(filter interface{}) []*User {
+func (mh *MongoHandler) Get(filter interface{}) []*Product {
 	collection := mh.client.Database(mh.database).Collection(CollectionName)
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -67,9 +67,9 @@ func (mh *MongoHandler) Get(filter interface{}) []*User {
 	}
 	defer cur.Close(ctx)
 
-	var result []*User
+	var result []*Product
 	for cur.Next(ctx) {
-		contact := &User{}
+		contact := &Product{}
 		er := cur.Decode(contact)
 		if er != nil {
 			log.Fatal(er)
@@ -79,7 +79,7 @@ func (mh *MongoHandler) Get(filter interface{}) []*User {
 	return result
 }
 
-func (mh *MongoHandler) AddOne(u interface{}) (*mongo.InsertOneResult, error) {
+func (mh *MongoHandler) AddOne(u *Product) (*mongo.InsertOneResult, error) {
 	collection := mh.client.Database(mh.database).Collection(CollectionName)
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -87,7 +87,7 @@ func (mh *MongoHandler) AddOne(u interface{}) (*mongo.InsertOneResult, error) {
 	return result, err
 }
 
-func (mh *MongoHandler) Update(u *User, filter interface{}, update interface{}) (*mongo.UpdateResult, error) {
+func (mh *MongoHandler) Update(u *Product, filter interface{}, update interface{}) (*mongo.UpdateResult, error) {
 	collection := mh.client.Database(mh.database).Collection(CollectionName)
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
