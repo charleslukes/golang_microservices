@@ -1,15 +1,16 @@
 package main
 
 import (
-	"net/http"
 	"github.com/go-chi/chi/v5"
+	"net/http"
 )
 
-func productRouter() http.Handler  {
+func productRouter() http.Handler {
 	r := chi.NewRouter()
 
 	r.Route("/product", func(r chi.Router) {
-		r.Get("/", getProfile)
+		r.Get("/all-products", getProducts)
+		r.Post("/", createProduct)
 	})
 
 	return r
