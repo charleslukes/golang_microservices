@@ -3,10 +3,13 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/charleslukes/golang_microservices/helper"
-	"go.mongodb.org/mongo-driver/bson"
 	"net/http"
 	"strings"
+
+	"github.com/charleslukes/golang_microservices/helper"
+	"github.com/go-chi/chi/v5"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type payload struct {
@@ -57,5 +60,26 @@ func createProduct(w http.ResponseWriter, r *http.Request) {
 
 func getProducts(w http.ResponseWriter, r *http.Request) {
 	products := mh.Get(struct{}{})
-	helper.RespondWithJson(w, 201, products)
+	helper.RespondWithJson(w, 200, products)
+}
+
+func getProductById(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	err := validation.Validate(id, validation.Required)
+
+	if err != nil {
+		helper.RespondWithError(w, 404, err.Error())
+		return
+	}
+	params := &Product{}
+
+	dbErr := mh.GetOne(params, bson.M{"_id": id})
+
+	if dbErr != nil {
+		helper.RespondWithError(w, 404, dbErr.Error())
+		return
+	}
+
+	helper.RespondWithJson(w, 200, params)
+
 }
