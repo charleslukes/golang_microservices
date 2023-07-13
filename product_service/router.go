@@ -9,6 +9,7 @@ func productRouter() http.Handler {
 	r := chi.NewRouter()
 
 	r.Route("/product", func(r chi.Router) {
+		r.Get("/{id}", getProductById)
 		r.Get("/all-products", getProducts)
 		r.Post("/", createProduct)
 	})
