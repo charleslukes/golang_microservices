@@ -10,7 +10,8 @@ func shoppingRouter() http.Handler  {
 	r := chi.NewRouter()
 
 	r.Route("/shopping", func(r chi.Router) {
-		// r.Get("/order", getProfile)
+		r.Post("/order", createOrder)
+		r.Get("/orders", getOrders)
 	})
 
 	return r
