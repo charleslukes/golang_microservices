@@ -1,5 +1,12 @@
 package main
 
+import (
+	"encoding/json"
+	"net/http"
+
+	"github.com/charleslukes/golang_microservices/helper"
+)
+
 type payload struct {
 	Message string      `json:"message"`
 	Data    interface{} `json:"data"`
@@ -32,6 +39,16 @@ func createOrder(w http.ResponseWriter, r *http.Request) {
 
 	payload := payload{
 		Message: "order created",
+		Data:    res,
+	}
+
+	helper.RespondWithJson(w, 201, payload)
+}
+
+func getOrders(w http.ResponseWriter, r *http.Request) {
+	res := mh.Get(struct{}{})
+	payload := payload{
+		Message: "success",
 		Data:    res,
 	}
 
